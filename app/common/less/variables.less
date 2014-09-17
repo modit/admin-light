@@ -1,0 +1,120 @@
+/**
+ * Global Theme
+ */
+
+@import '../../../lib/bootstrap/less/variables.less';
+
+// Colors ///////////////////////////////////////////////////
+
+@brand-primary:             #10889e;
+@brand-success:             #95bc11;
+@brand-info:                #c130aa;
+@brand-warning:             #d3990f;
+@brand-danger:              #c53d12;
+
+// Grays ////////////////////////////////////////////////////
+
+@gray:                      #555555;
+@gray-lighter:              #e0e0e0;
+@gray-darkish:              darken(@gray-dark, 3%);
+
+// Alerts ///////////////////////////////////////////////////
+
+@state-danger-text:         @brand-warning;
+@state-danger-bg:           lighten(@state-danger-text, 15%);
+
+@alert-border-radius:   0;
+
+@alert-success-bg:      @gray-darker;
+@alert-success-border:  @brand-success;
+@alert-success-text:    @brand-success;
+
+@alert-info-bg:      @gray-darker;
+@alert-info-border:  @brand-primary;
+@alert-info-text:    @brand-primary;
+
+@alert-warning-bg:      @gray-darker;
+@alert-warning-border:  @brand-warning;
+@alert-warning-text:    @brand-warning;
+
+@alert-danger-bg:      @gray-darker;
+@alert-danger-border:  @brand-danger;
+@alert-danger-text:    @brand-danger;
+
+// Badges ///////////////////////////////////////////////////
+
+@badge-bg:                    transparent;
+@badge-color:                 @gray-light;
+@badge-link-hover-color:      #fff;
+@badge-active-color:          #fff;
+@badge-active-bg:             transparent;
+
+// Forms ////////////////////////////////////////////////////
+
+@input-bg:                       @gray-darker;
+@input-bg-disabled:              @gray;
+
+@input-color:                    @gray-lighter;
+@input-color-placeholder:        #a3a3a3;
+
+@input-border:                   @gray-darker;
+@input-border-radius:            0;//@border-radius-base;
+@input-border-focus:             @brand-success;
+
+@input-group-addon-bg:           #2a2a2a;
+@input-group-addon-border-color: @input-border;
+
+// Dropdowns ///////////////////////////////////////////////
+
+@dropdown-bg:                    @gray;
+@dropdown-border:                rgba(0,0,0,.25);
+@dropdown-divider-bg:            @gray-dark;
+
+@dropdown-link-color:            @gray-lighter;
+@dropdown-link-hover-color:      lighten(@gray-lighter, 5%);
+@dropdown-link-hover-bg:         @gray-dark;
+
+@dropdown-link-disabled-color:   @gray-light;
+@dropdown-header-color:          @gray-light;
+
+// Typography //////////////////////////////////////////////
+
+@link-color:                    @brand-success;
+
+// List groups /////////////////////////////////////////////
+
+@list-group-bg:                 @gray-dark;
+@list-group-border:             @gray-dark;
+@list-group-border-radius:      0;
+
+@list-group-hover-bg:           @gray-darker;
+@list-group-active-color:       #ffffff;
+@list-group-active-bg:          @brand-success;
+@list-group-active-border:      @gray-dark;
+@list-group-active-text-color:  #ffffff;
+
+@list-group-link-color:         @gray-light;
+@list-group-link-heading-color: @gray-lighter;
+
+
+// Panels /////////////////////////////////////////////////
+
+@panel-bg:                    @gray-dark;
+@panel-body-padding:          15px;
+@panel-border-radius:         0;
+
+@panel-inner-border:          @gray-dark;
+@panel-footer-bg:             @gray-dark;
+
+@panel-default-text:          @gray-lighter;
+@panel-default-border:        @gray-dark;
+@panel-default-heading-bg:    @gray-dark;
+
+// Breadcrumbs ///////////////////////////////////////////
+
+@breadcrumb-padding-vertical:   4.5px;
+@breadcrumb-padding-horizontal: 0;
+@breadcrumb-bg:                 transparent;
+@breadcrumb-color:              @gray;
+@breadcrumb-active-color:       @gray-lighter;
+@breadcrumb-separator:          "/";

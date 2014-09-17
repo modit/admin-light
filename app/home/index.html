@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<script src="home.js"></script>
+
+<template id="home.tpl.html">
+  <p class="lead">Dashboard</p>
+</template>
+
+<template id="user-nav.tpl.html">
+  <div class="dropdown pull-right navatar">
+    <a href="#" class="dropdown-toggle text-lightish" data-toggle="dropdown"><span>{{user.profile.username}}</span>
+      <img modit-thumb="user" thumb-size="25" right>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a href="https://modit.desk.com" target="_blank">Help</a></li>
+      <li><a href="//{{API_HOST}}/auth/logout?redirect={{origin}}" target="_self">Sign out</a></li>
+    </ul>
+  </div>
+</template>
