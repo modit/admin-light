@@ -4,8 +4,8 @@ angular.module('modit.admin', [
   'modit.api.v1',
   'modit.thumb',
   'ui.router',
-  'templateImport',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'templateImport'
 ])
   
 .config(function($locationProvider, $stateProvider, $urlRouterProvider) {
@@ -16,9 +16,6 @@ angular.module('modit.admin', [
     templateUrl: 'app.tpl.html'
   });
   $urlRouterProvider.otherwise( '/' );
-  
-  var test = '';
-  
 })
 
 .run(function($rootScope, $state, $location, api, ngToast) {
@@ -48,7 +45,8 @@ angular.module('modit.admin', [
   });
 })
 
-.controller('AppCtrl', function($scope) {
+.controller('AppCtrl', function($scope, CORE_HOST) {
   $scope.logo = '/app/common/core/assets/logo.svg';
+  $scope.CORE_HOST = CORE_HOST;
 })
 ;

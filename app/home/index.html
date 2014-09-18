@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 
 <script src="home.js"></script>
-
-<template id="home.tpl.html">
-  <p class="lead">Dashboard</p>
-</template>
+<link rel="stylesheet" href="home.css">
 
 <template id="user-nav.tpl.html">
   <div class="dropdown pull-right navatar">
@@ -16,4 +13,112 @@
       <li><a href="//{{API_HOST}}/auth/logout?redirect={{origin}}" target="_self">Sign out</a></li>
     </ul>
   </div>
+</template>
+
+<template id="home.tpl.html">
+  <div class="admin-home">
+    <p class="lead">Admin Dashboard</p>
+    <hr>
+    <div class="row">
+      <div class="form-group col-sm-3">
+        <label class="form-label">Metric</label>
+        <select class="form-control" ng-model="metric">
+          <option value="project">Projects</option>
+          <option value="user">Users</option>
+          <option value="org">Orgs</option>
+        </select>
+      </div>
+      
+      <div class="form-group col-sm-3">
+        <label class="form-label">Date Range</label>
+        <select class="form-control" ng-model="range" ng-options="o.label for o in rangeOptions">
+        </select>
+      </div>
+      
+      <div class="form-group col-sm-3" ng-show="range.label === 'Custom'">
+        <label class="form-label">Start</label>
+        <input type="text" class="form-control" datepicker-popup show-weeks="false" ng-model="range.start" />
+      </div>
+      <div class="form-group col-sm-3" ng-show="range.label === 'Custom'">
+        <label class="form-label">End</label>
+        <input type="text" class="form-control" datepicker-popup show-weeks="false" ng-model="range.end" />
+      </div>
+    </div>
+    <hr>
+    <p ng-show="!data.$resolved">
+      Loading...
+    </p>
+    <div ng-show="data.$resolved && data.length">
+      <div class="row">
+        <div class="col-sm-3 lead">Date</div>
+        <div class="col-sm-3 lead">New</div>
+        <div class="col-sm-3 lead">Deleted</div>
+        <div class="col-sm-3 lead">Total</div>
+      </div>
+      <div class="row day" ng-repeat="day in data">
+        <div class="col-sm-3">{{day.date | date:'mediumDate'}}</div>
+        <div class="col-sm-3">{{day.new}}</div>
+        <div class="col-sm-3">{{day.deleted}}</div>
+        <div class="col-sm-3">{{day.total}}</div>
+      </div>
+      <div class="row day text-success">
+        <div class="col-sm-3"><b>Total</b></div>
+        <div class="col-sm-3"><b>{{data | sum:'new'}}</b></div>
+        <div class="col-sm-3"><b>{{data | sum:'deleted'}}</b></div>
+        <div class="col-sm-3"><b>{{data[data.length - 1].total}}</b></div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<!-- /////////////////////////// Custom Datepicker Template /////////////////////////////////// -->
+<template id="template/datepicker/popup.html">
+  <ul class="dropdown-menu" ng-style="{display: (isOpen && 'block') || 'none', top: position.top+'px', left: position.left+'px'}">
+  	<li ng-transclude></li>
+  	<li ng-show="showButtonBar" style="padding:10px 9px 2px">
+  		<span class="btn-group">
+  			<button type="button" class="btn btn-sm btn-default-dark" ng-click="today()">{{currentText}}</button>
+  			<button type="button" class="btn btn-sm btn-default-dark" ng-click="showWeeks = ! showWeeks" ng-class="{active: showWeeks}">{{toggleWeeksText}}</button>
+  			<button type="button" class="btn btn-sm btn-default-dark" ng-click="clear()">{{clearText}}</button>
+  		</span>
+  		<button type="button" class="btn btn-sm btn-success pull-right" ng-click="isOpen = false">{{closeText}}</button>
+  	</li>
+  </ul>
+</template>
+<template id="template/datepicker/datepicker.html">
+  <table>
+    <thead>
+      <tr>
+        <th ng-show="showWeekNumbers" style="width: 30px;"></th>
+        <th>
+          <button type="button" class="btn btn-default-dark btn-sm pull-left" ng-click="move(-1)">
+            <i class="fa fa-angle-left"></i>
+          </button>
+        </th>
+        <th colspan="{{rows[0].length - 2}}">
+          <button type="button" class="btn btn-default-dark btn-sm btn-block" ng-click="toggleMode()">
+            <strong>{{title}}</strong>
+          </button>
+        </th>
+        <th>
+          <button type="button" class="btn btn-default-dark btn-sm pull-right" ng-click="move(1)">
+            <i class="fa fa-angle-right"></i>
+          </button>
+        </th>
+      </tr>
+      <tr ng-show="labels.length > 0" class="h6">
+        <th ng-show="showWeekNumbers" class="text-center">W#</th>
+        <th ng-repeat="label in labels" class="text-center">{{label}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in rows">
+        <td ng-show="showWeekNumbers" class="text-center"><em>{{ getWeekNumber(row) }}</em></td>
+        <td ng-repeat="dt in row" class="text-center">
+          <button type="button" style="width:100%;" class="btn btn-default-dark btn-sm" ng-class="{'btn-info': dt.selected}" ng-click="select(dt.date)" ng-disabled="dt.disabled"><span ng-class="{'text-muted': dt.secondary}">{{dt.label}}</span></button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </template>

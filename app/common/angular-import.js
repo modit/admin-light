@@ -14,14 +14,6 @@ angular.module('templateImport', [])
           $templateCache.put(template.id, template.innerHTML);
         }
         
-        if(window.less){
-          var lessSheets = [].slice.call(link.import.querySelectorAll('link[rel="stylesheet/less"]'));
-          while(lessSheets.length){
-            less.sheets.push(lessSheets.shift());
-            less.refresh();
-          }
-        }
-        
         links.push.apply(links, link.import.querySelectorAll('link[rel=import]'));
       }
     }

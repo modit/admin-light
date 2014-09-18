@@ -5,11 +5,12 @@
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-sanitize.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-animate.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-resource.min.js"></script>
-
-<script src="common/angular-import.js"></script>
-
 <link href="common/modit-core.php" rel="import">
 
+<script src="common/angular-import.js"></script>
+<script src="common/api/v1/metric.js"></script>
+
+<link rel="stylesheet" href="app.css" />
 <script src="app.js"></script>
 <script>
   angular.module('modit.api.v1')
@@ -25,16 +26,19 @@
     .constant('API_HOST',   '<?= $API_HOST ?>')
   ;
 </script>
-<link rel="stylesheet" href="app.css" />
+
 <template id="app.tpl.html">
-  <div class="header col-lg-12">
-    <a ui-sref="app.home" ui-sref-opts="{ inherit: false }" class="pull-left">
-      <img class="modit-logo img-responsive" ng-src="{{logo}}" >
+  <div class="admin-header col-lg-12">
+    <a ng-href="//{{CORE_HOST}}" class="pull-left">
+      <img class="modit-logo" ng-src="{{logo}}" >
+      
     </a>
+    <span class="pull-left text-warning text-large admin-tag"><b>Admin</b></span>
+    
     <div ui-view="usernav"></div>
   </div>
   
-  <div ui-view="main" class="main"></div>
+  <div ui-view="main" class="admin-main col-lg-12"></div>
 </template>
 
 

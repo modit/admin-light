@@ -1,19 +1,25 @@
-@import "../lib/bootstrap/less/bootstrap.less";
-@import "common/less/variables.less";
-
+@import (reference) "../lib/bootstrap/less/bootstrap.less";
+@import (reference) "common/less/flexbox.less";
+@import (reference) "common/less/variables.less";
 
 body {
   background-color: #eee;
   color: rgba(0, 0, 0, 0.87);
 }
 
-.header {
+.admin-header {
   padding-left: 15px;
   // background-color: @gray-light;
   border-bottom: 1px solid @gray-light;
   height: @navbar-height;
+  
+  .admin-tag {
+    margin-top: 23px;
+    margin-left: 5px;
+  }
 }
 
-.main {
-  margin-top: @navbar-height;
+.admin-main {
+  padding-top: 15px;
+  padding-bottom: 15px;
 }
