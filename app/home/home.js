@@ -33,6 +33,7 @@ angular.module('modit.admin.home', [
   $scope.data = data;
   
   $scope.metric = 'project';
+  $scope.optionsCollapsed = true;
   
   $scope.rangeOptions = [
     { label: 'Today',
@@ -57,10 +58,36 @@ angular.module('modit.admin.home', [
     }
   ];
   
+  $scope.trailingOptions = [
+    { label: 'Sum',
+      method: function(day, interval, property){
+        var index = $scope.data.indexOf(day);
+        return $scope.data.slice(index - interval + 1, index + 1).reduce(function(sum, day){
+          return sum + day[property];
+        }, 0);
+      }
+    },
+    { label: 'Average',
+      method: function(day, inteval, property){
+      
+      }
+    }
+  ];
+  
   $scope.range = $scope.rangeOptions[0];
+  $scope.method = $scope.trailingOptions[0].method;
   
   $scope.query = function(){
-    $scope.data = Metric.query({ type: $scope.metric, start: $scope.range.start.valueOf(), end: $scope.range.end.valueOf() });
+    $scope.trail = $scope.interval1 && ($scope.interval2 || $scope.interval1 || 0);
+    var start = $scope.trail ? moment($scope.range.start).subtract($scope.trail - 1, 'day') : $scope.range.start;
+    $scope.data = Metric.query({ type: $scope.metric, start: start.valueOf(), end: $scope.range.end.valueOf() });
+    
+    
+    $scope.columns = 1 + ($scope.interval1 && 1 || 0) + ($scope.interval1 && $scope.interval2 && 1 || 0);
+    $scope.columnClass = 'col-xs-' + $scope.columns;
+    $scope.valueClass = 'col-xs-' + (12 / $scope.columns);
+    $scope.int1 = $scope.interval1;
+    $scope.int2 = $scope.interval2;
   };
   
   $scope.$watch(function(){
@@ -79,18 +106,30 @@ angular.module('modit.admin.home', [
 })
 
 .filter('sum', function() {
-    return function(data, key) {
-        if (typeof(data) === 'undefined' || typeof(key) === 'undefined') {
-            return 0;
-        }
+  return function(data, key) {
+    if (typeof(data) === 'undefined' || typeof(key) === 'undefined') {
+      return 0;
+    }
 
-        var sum = 0;
-        for (var i = data.length - 1; i >= 0; i--) {
-            sum += parseInt(data[i][key]);
-        }
+    var sum = 0;
+    for (var i = data.length - 1; i >= 0; i--) {
+      sum += parseInt(data[i][key]);
+    }
 
-        return sum;
-    };
-});
+    return sum;
+  };
+})
+
+.filter('slice', function() {
+  return function(arr, start, end) {
+    return (arr || []).slice(start, end);
+  };
+})
+
+.filter('trailing', function() {
+  return function(day, method, interval, property) {
+    return method(day, interval, property);
+  };
+})
 ;
   
