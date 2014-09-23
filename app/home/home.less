@@ -8,4 +8,35 @@
       background-color: @gray-lighter;
     }
   }
+  
+  .results {
+    
+    .var-col {
+      .make-xs-column(1);
+      
+      .row > div {
+        .make-xs-column(12);
+      }
+    }
+    
+    &.trail1 {
+      .var-col {
+        .make-xs-column(2);
+        
+        .row > div {
+          .make-xs-column(6);
+        }
+      }
+    }
+    
+    &.trail2 {
+      .var-col {
+        .make-xs-column(3);
+        
+        .row > div {
+          .make-xs-column(4);
+        }
+      }
+    }
+  }
 }

@@ -60,7 +60,7 @@ angular.module('modit.admin.home', [
   
   $scope.trailingOptions = [
     { label: 'Sum',
-      method: function(day, interval, property){
+      formula: function(day, interval, property){
         var index = $scope.data.indexOf(day);
         return $scope.data.slice(index - interval + 1, index + 1).reduce(function(sum, day){
           return sum + day[property];
@@ -68,26 +68,32 @@ angular.module('modit.admin.home', [
       }
     },
     { label: 'Average',
-      method: function(day, inteval, property){
-      
+      formula: function(day, interval, property){
+        return $scope.trailingOptions[0].formula(day, interval, property) / interval;
       }
     }
   ];
   
   $scope.range = $scope.rangeOptions[0];
-  $scope.method = $scope.trailingOptions[0].method;
+  $scope.method = $scope.trailingOptions[0];
   
   $scope.query = function(){
-    $scope.trail = $scope.interval1 && ($scope.interval2 || $scope.interval1 || 0);
-    var start = $scope.trail ? moment($scope.range.start).subtract($scope.trail - 1, 'day') : $scope.range.start;
+    $scope.trail = $scope.interval1 && (($scope.interval2 || $scope.interval1) - 1) || 0;
+    
+    
+    var start = $scope.trail ? moment($scope.range.start).subtract($scope.trail, 'day') : $scope.range.start;
     $scope.data = Metric.query({ type: $scope.metric, start: start.valueOf(), end: $scope.range.end.valueOf() });
     
-    
+
     $scope.columns = 1 + ($scope.interval1 && 1 || 0) + ($scope.interval1 && $scope.interval2 && 1 || 0);
+    
+    
+    
     $scope.columnClass = 'col-xs-' + $scope.columns;
     $scope.valueClass = 'col-xs-' + (12 / $scope.columns);
-    $scope.int1 = $scope.interval1;
-    $scope.int2 = $scope.interval2;
+    
+    $scope.resultInt1 = $scope.interval1;
+    $scope.resultInt2 = $scope.interval2;
   };
   
   $scope.$watch(function(){
@@ -97,6 +103,37 @@ angular.module('modit.admin.home', [
       $scope.query();
     }
   });
+  
+  $scope.getTotal = function(type, section, trail){
+    var rows = [].slice.call(document.querySelectorAll('[' + section + '="' + (trail || '') + '"]'));
+    
+    return {
+      Total: function(){
+        if(section === 'tot'){
+          return parseFloat(rows.pop().innerHTML.replace(/,/g, ''));
+        } else {
+          return rows.reduce(function(total, row){
+            return total += parseFloat(row.innerHTML.replace(/,/g, ''));
+          }, 0);
+        }
+      },
+      Average: function(){
+        return rows.reduce(function(total, row){
+          return total += parseFloat(row.innerHTML.replace(/,/g, ''));
+        }, 0) / rows.length;
+      },
+      Maximum: function(){
+        return rows.reduce(function(max, row){
+          return Math.max(max, parseFloat(row.innerHTML.replace(/,/g, '')));
+        }, 0);
+      },
+      Minimum: function(){
+        return rows.reduce(function(max, row){
+          return Math.min(max, parseFloat(row.innerHTML.replace(/,/g, '')));
+        }, Infinity);
+      }
+    }[type]();
+  };
 })
 
 .controller('UserNavCtrl', function($scope, currentUser, API_HOST) {
@@ -128,7 +165,7 @@ angular.module('modit.admin.home', [
 
 .filter('trailing', function() {
   return function(day, method, interval, property) {
-    return method(day, interval, property);
+    return method.formula(day, interval, property);
   };
 })
 ;
