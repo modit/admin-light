@@ -48,7 +48,7 @@ angular.module('modit.admin', [
   });
 })
 
-.controller('AppCtrl', function($scope, CORE_HOST) {
-  $scope.logo = 'https://' + CORE_HOST + '/assets/logo.svg';
+.controller('AppCtrl', function($scope) {
+  $scope.logo = '/app/common/core/assets/logo.svg';
 })
 ;
