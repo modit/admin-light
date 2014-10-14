@@ -136,7 +136,7 @@
         </div>
       </div>
       
-      <div class="results-total" ng-show="filtered.length > 1">
+      <div class="results-total" ng-if="filtered.length > 1">
         <hr>
         <div class="row day" ng-repeat="type in ['Total', 'Average', 'Maximum', 'Minimum']">
           <div class="col-xs-2"><b>{{type}}</b></div>
