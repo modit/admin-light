@@ -5,6 +5,10 @@
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-sanitize.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-animate.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-resource.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/c3/0.3.0/c3.js"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/c3/0.3.0/c3.css" rel="stylesheet">
+
 <link href="common/modit-core.php" rel="import">
 
 <script src="common/angular-import.js"></script>

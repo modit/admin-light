@@ -72,100 +72,111 @@
     <p ng-show="!data.$resolved">
       Loading...
     </p>
-    <div ng-show="data.$resolved && data.length" class="results" ng-class="{ 'trail1': resultInt1, 'trail2': resultInt2 }">
+    <tabset ng-show="data.$resolved">
+      <tab heading="Table">
+        <div ng-show="data.$resolved && data.length" class="results" ng-class="{ 'trail1': resultInt1, 'trail2': resultInt2 }">
       
-      <div class="results-header">
-      
-        <div class="row lead">
-          <div class="col-xs-2">Date</div>
-          <div class="var-col">New</div>
-          <div class="var-col">Deleted</div>
-          <div class="var-col">Total</div>
+          <div class="results-header">
+          
+            <div class="row lead">
+              <div class="col-xs-2">Date</div>
+              <div class="var-col">New</div>
+              <div class="var-col">Deleted</div>
+              <div class="var-col">Total</div>
+            </div>
+            
+            <div class="row" ng-show="resultInt1">
+              <div class="col-xs-2">&nbsp;</div>
+              <div class="var-col">
+                <div class="row">
+                  <div>1d</div>
+                  <div>{{resultInt1}}d</div>
+                  <div ng-show="resultInt2">{{resultInt2}}d</div>
+                </div>
+              </div>
+              <div class="var-col">
+                <div class="row">
+                  <div>1d</div>
+                  <div>{{resultInt1}}d</div>
+                  <div ng-show="resultInt2">{{resultInt2}}d</div>
+                </div>
+              </div>
+              <div class="var-col">
+                <div class="row" ng-show="method.label != 'Sum'">
+                  <div>1d</div>
+                  <div>{{resultInt1}}d</div>
+                  <div ng-show="resultInt2">{{resultInt2}}d</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="results-main">
+            <div class="row day" ng-repeat="day in filtered = (data | slice:trail | orderBy:'-date') ">
+              <div class="col-xs-2">{{day.date | date:'mediumDate'}}</div>
+              <div class="var-col">
+                <div class="row text-success">
+                  <div new="">{{day.new | number}}</div>
+                  <div new="trail1" ng-show="resultInt1" >{{day | trailing:method:resultInt1:'new' | number}}</div>
+                  <div new="trail2" ng-show="resultInt2">{{day | trailing:method:resultInt2:'new' | number}}</div>
+                </div>
+              </div>
+              <div class="var-col">
+                <div class="row text-danger">
+                  <div del="">{{day.deleted | number}}</div>
+                  <div del="trail1" ng-show="resultInt1">{{day | trailing:method:resultInt1:'deleted' | number}}</div>
+                  <div del="trail2" ng-show="resultInt2">{{day | trailing:method:resultInt2:'deleted' | number}}</div>
+                </div>
+              </div>
+              <div class="var-col">
+                <div class="row text-primary">
+                  <div tot="">{{day.total | number}}</div>
+                  <div tot="trail1" ng-show="resultInt1 && method.label != 'Sum'">{{day | trailing:method:resultInt1:'total' | number}}</div>
+                  <div tot="trail2" ng-show="resultInt2 && method.label != 'Sum'">{{day | trailing:method:resultInt2:'total'| number}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="results-total" ng-if="filtered.length > 1">
+            <hr>
+            <div class="row day" ng-repeat="type in ['Total', 'Average', 'Maximum', 'Minimum']">
+              <div class="col-xs-2"><b>{{type}}</b></div>
+              <div class="var-col">
+                <div class="row text-success">
+                  <div><b>{{getTotal(type, 'new') | number}}</b></div>
+                  <div ng-show="resultInt1 && (type !== 'Total' || method.label != 'Sum')"><b>{{getTotal(type, 'new', 'trail1') | number}}</b></div>
+                  <div ng-show="resultInt2 && (type !== 'Total' || method.label != 'Sum')"><b>{{getTotal(type, 'new', 'trail2') | number}}</b></div>
+                </div>
+              </div>
+              <div class="var-col">
+                <div class="row text-danger">
+                  <div><b>{{getTotal(type, 'del') | number}}</b></div>
+                  <div ng-show="resultInt1 && (type !== 'Total' || method.label != 'Sum')"><b>{{getTotal(type, 'del', 'trail1') | number}}</b></div>
+                  <div ng-show="resultInt2 && (type !== 'Total' || method.label != 'Sum')"><b>{{getTotal(type, 'del', 'trail2') | number}}</b></div>
+                </div>
+              </div>
+              <div class="var-col">
+                <div class="row text-primary">
+                  <div><b>{{getTotal(type, 'tot') | number}}</b></div>
+                  <div ng-show="resultInt1 && method.label != 'Sum'"><b>{{getTotal(type, 'tot', 'trail1') | number}}</b></div>
+                  <div ng-show="resultInt2 && method.label != 'Sum'"><b>{{getTotal(type, 'tot', 'trail2') | number}}</b></div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          
+        </div>
+      </tab>
+      <tab heading="Graph">
+        <div style="padding-top: 30px">
+          <div modit-chart="chart"></div>
         </div>
         
-        <div class="row" ng-show="resultInt1">
-          <div class="col-xs-2">&nbsp;</div>
-          <div class="var-col">
-            <div class="row">
-              <div>1d</div>
-              <div>{{resultInt1}}d</div>
-              <div ng-show="resultInt2">{{resultInt2}}d</div>
-            </div>
-          </div>
-          <div class="var-col">
-            <div class="row">
-              <div>1d</div>
-              <div>{{resultInt1}}d</div>
-              <div ng-show="resultInt2">{{resultInt2}}d</div>
-            </div>
-          </div>
-          <div class="var-col">
-            <div class="row" ng-show="method.label != 'Sum'">
-              <div>1d</div>
-              <div>{{resultInt1}}d</div>
-              <div ng-show="resultInt2">{{resultInt2}}d</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </tab>
       
-      <div class="results-main">
-        <div class="row day" ng-repeat="day in filtered = (data | slice:trail | orderBy:'-date') ">
-          <div class="col-xs-2">{{day.date | date:'mediumDate'}}</div>
-          <div class="var-col">
-            <div class="row text-success">
-              <div new="">{{day.new | number}}</div>
-              <div new="trail1" ng-show="resultInt1" >{{day | trailing:method:resultInt1:'new' | number}}</div>
-              <div new="trail2" ng-show="resultInt2">{{day | trailing:method:resultInt2:'new' | number}}</div>
-            </div>
-          </div>
-          <div class="var-col">
-            <div class="row text-danger">
-              <div del="">{{day.deleted | number}}</div>
-              <div del="trail1" ng-show="resultInt1">{{day | trailing:method:resultInt1:'deleted' | number}}</div>
-              <div del="trail2" ng-show="resultInt2">{{day | trailing:method:resultInt2:'deleted' | number}}</div>
-            </div>
-          </div>
-          <div class="var-col">
-            <div class="row text-primary">
-              <div tot="">{{day.total | number}}</div>
-              <div tot="trail1" ng-show="resultInt1 && method.label != 'Sum'">{{day | trailing:method:resultInt1:'total' | number}}</div>
-              <div tot="trail2" ng-show="resultInt2 && method.label != 'Sum'">{{day | trailing:method:resultInt2:'total'| number}}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="results-total" ng-if="filtered.length > 1">
-        <hr>
-        <div class="row day" ng-repeat="type in ['Total', 'Average', 'Maximum', 'Minimum']">
-          <div class="col-xs-2"><b>{{type}}</b></div>
-          <div class="var-col">
-            <div class="row text-success">
-              <div><b>{{getTotal(type, 'new') | number}}</b></div>
-              <div ng-show="resultInt1 && (type !== 'Total' || method.label != 'Sum')"><b>{{getTotal(type, 'new', 'trail1') | number}}</b></div>
-              <div ng-show="resultInt2 && (type !== 'Total' || method.label != 'Sum')"><b>{{getTotal(type, 'new', 'trail2') | number}}</b></div>
-            </div>
-          </div>
-          <div class="var-col">
-            <div class="row text-danger">
-              <div><b>{{getTotal(type, 'del') | number}}</b></div>
-              <div ng-show="resultInt1 && (type !== 'Total' || method.label != 'Sum')"><b>{{getTotal(type, 'del', 'trail1') | number}}</b></div>
-              <div ng-show="resultInt2 && (type !== 'Total' || method.label != 'Sum')"><b>{{getTotal(type, 'del', 'trail2') | number}}</b></div>
-            </div>
-          </div>
-          <div class="var-col">
-            <div class="row text-primary">
-              <div><b>{{getTotal(type, 'tot') | number}}</b></div>
-              <div ng-show="resultInt1 && method.label != 'Sum'"><b>{{getTotal(type, 'tot', 'trail1') | number}}</b></div>
-              <div ng-show="resultInt2 && method.label != 'Sum'"><b>{{getTotal(type, 'tot', 'trail2') | number}}</b></div>
-            </div>
-          </div>
-        </div>
-        
-      </div>
-      
-    </div>
+    </tabset>
   </div>
 </template>
 

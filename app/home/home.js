@@ -94,6 +94,54 @@ angular.module('modit.admin.home', [
     
     $scope.resultInt1 = $scope.interval1;
     $scope.resultInt2 = $scope.interval2;
+    
+    $scope.data.$promise.then(function(data){
+      
+      $scope.chart = {
+        data: {
+          x: 'x',
+          columns: [
+            ['x'].concat(data.map(function(data){
+              return new Date(data.date);
+            })),
+            ['new'].concat(data.map(function(data){
+              return data.new;
+            })),
+            ['deleted'].concat(data.map(function(data){
+              return data.deleted;
+            })),
+            ['total'].concat(data.map(function(data){
+              return data.total;
+            }))
+          ],
+          axes: {
+            'total': 'y2'
+          }
+        },
+        color: {
+          pattern: ['#95bc11', '#c53d12', '#10889e']
+        },
+        axis: {
+          x: {
+            type : 'timeseries',
+            tick: {
+              format: function (x) { return moment(x).format('M/D'); }
+            }
+          },
+          y: {
+            
+          },
+          y2: {
+            show: true,
+            label: { // ADD
+              text: 'Total',
+              position: 'outer-middle'
+            }
+          }
+        }
+      };
+      
+    });
   };
   
   $scope.$watch(function(){
@@ -166,6 +214,22 @@ angular.module('modit.admin.home', [
 .filter('trailing', function() {
   return function(day, method, interval, property) {
     return method.formula(day, interval, property);
+  };
+})
+
+.directive('moditChart', function(){
+  return {
+    restrict: 'A',
+    scope: {
+      chart: '=moditChart'
+    },
+    link: function(scope, elem, attrs){
+      scope.$watch('chart', function(chart){
+        if(chart){
+          c3.generate(angular.extend(chart, { bindto: elem[0]}));
+        }
+      });
+    }
   };
 })
 ;
