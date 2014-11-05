@@ -29,7 +29,19 @@ angular.module('modit.admin.home', [
   });
 })
 
-.controller('HomeCtrl', function($scope, data, Metric) {
+.controller('HomeCtrl', function($scope, $filter, data, Metric) {
+  $scope.colorMap = {
+    'new': '#95bc11',
+    'new-t1': $filter('shade')('#95bc11', 50),
+    'new-t2': $filter('shade')('#95bc11', -50),
+    'deleted': '#c53d12',
+    'deleted-t1': $filter('shade')('#c53d12', 50),
+    'deleted-t2': $filter('shade')('#c53d12', -50),
+    'total': '#10889e',
+    'total-t1': $filter('shade')('#10889e', 50),
+    'total-t2': $filter('shade')('#10889e', -50)
+  };
+  
   $scope.data = data;
   
   $scope.metric = 'project';
@@ -62,14 +74,14 @@ angular.module('modit.admin.home', [
     { label: 'Sum',
       formula: function(day, interval, property){
         var index = $scope.data.indexOf(day);
-        return $scope.data.slice(index - interval + 1, index + 1).reduce(function(sum, day){
+        return Math.round($scope.data.slice(index - interval + 1, index + 1).reduce(function(sum, day){
           return sum + day[property];
-        }, 0);
+        }, 0));
       }
     },
     { label: 'Average',
       formula: function(day, interval, property){
-        return $scope.trailingOptions[0].formula(day, interval, property) / interval;
+        return Math.round(($scope.trailingOptions[0].formula(day, interval, property) / interval));
       }
     }
   ];
@@ -87,8 +99,6 @@ angular.module('modit.admin.home', [
 
     $scope.columns = 1 + ($scope.interval1 && 1 || 0) + ($scope.interval1 && $scope.interval2 && 1 || 0);
     
-    
-    
     $scope.columnClass = 'col-xs-' + $scope.columns;
     $scope.valueClass = 'col-xs-' + (12 / $scope.columns);
     
@@ -96,30 +106,58 @@ angular.module('modit.admin.home', [
     $scope.resultInt2 = $scope.interval2;
     
     $scope.data.$promise.then(function(data){
+      data = data.slice($scope.trail);
+      
+      var columns = [
+        ['x'].concat(data.map(function(data){
+          return new Date(data.date);
+        }))
+      ];
+      
+      var pattern = [];
+      
+      var axes = { total: 'y2' };
+      
+      //{{day | trailing:method:resultInt1:'deleted' | number}}
+      ['new', 'deleted', 'total'].forEach(function(prop){
+        
+        columns.push([prop].concat(data.map(function(day){
+          return day[prop];
+        })));
+        
+        pattern.push($scope.colorMap[prop]);
+        
+        if($scope.resultInt1 && !(prop === 'total' && $scope.method.label === 'Sum')){
+          columns.push([prop + '-' + $scope.resultInt1 + 'd'].concat(data.map(function(day){
+            return $scope.method.formula(day, $scope.resultInt1, prop);
+          })));
+          
+          pattern.push($scope.colorMap[prop + '-t1']);
+          if(prop === 'total'){
+            axes['total-' + $scope.resultInt1 + 'd'] = 'y2';
+          }
+        }
+        
+        if($scope.resultInt2 && !(prop === 'total' && $scope.method.label === 'Sum')){
+          columns.push([prop + '-' + $scope.resultInt2 + 'd'].concat(data.map(function(day){
+            return $scope.method.formula(day, $scope.resultInt2, prop);
+          })));
+          
+          pattern.push($scope.colorMap[prop + '-t2']);
+          if(prop === 'total'){
+            axes['total-' + $scope.resultInt2 + 'd'] = 'y2';
+          }
+        }
+      });
       
       $scope.chart = {
         data: {
           x: 'x',
-          columns: [
-            ['x'].concat(data.map(function(data){
-              return new Date(data.date);
-            })),
-            ['new'].concat(data.map(function(data){
-              return data.new;
-            })),
-            ['deleted'].concat(data.map(function(data){
-              return data.deleted;
-            })),
-            ['total'].concat(data.map(function(data){
-              return data.total;
-            }))
-          ],
-          axes: {
-            'total': 'y2'
-          }
+          columns: columns,
+          axes: axes
         },
         color: {
-          pattern: ['#95bc11', '#c53d12', '#10889e']
+          pattern: pattern
         },
         axis: {
           x: {
@@ -140,7 +178,6 @@ angular.module('modit.admin.home', [
           }
         }
       };
-      
     });
   };
   
@@ -214,6 +251,36 @@ angular.module('modit.admin.home', [
 .filter('trailing', function() {
   return function(day, method, interval, property) {
     return method.formula(day, interval, property);
+  };
+})
+
+.filter('shade', function(){
+  return function(col, amt){
+    var usePound = false;
+  
+    if (col[0] == "#") {
+        col = col.slice(1);
+        usePound = true;
+    }
+ 
+    var num = parseInt(col,16);
+ 
+    var r = (num >> 16) + amt;
+ 
+    if (r > 255) r = 255;
+    else if  (r < 0) r = 0;
+ 
+    var b = ((num >> 8) & 0x00FF) + amt;
+ 
+    if (b > 255) b = 255;
+    else if  (b < 0) b = 0;
+ 
+    var g = (num & 0x0000FF) + amt;
+ 
+    if (g > 255) g = 255;
+    else if (g < 0) g = 0;
+ 
+    return (usePound ? "#" : "") + String("000000" + (g | (b << 8) | (r << 16)).toString(16)).slice(-6);
   };
 })
 
