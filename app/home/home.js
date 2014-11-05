@@ -86,8 +86,11 @@ angular.module('modit.admin.home', [
     }
   ];
   
-  $scope.range = $scope.rangeOptions[0];
-  $scope.method = $scope.trailingOptions[0];
+  $scope.range = $scope.rangeOptions[2];
+  $scope.method = $scope.trailingOptions[1];
+  $scope.interval1 = 7;
+  $scope.interval2 = 30;
+  $scope.optionsCollapsed = false;
   
   $scope.query = function(){
     $scope.trail = $scope.interval1 && (($scope.interval2 || $scope.interval1) - 1) || 0;
